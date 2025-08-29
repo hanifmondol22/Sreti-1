@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Mobile Canvas Animation</title>
+<style>
+  html,body{margin:0;height:100%;background:#02030a;overflow:hidden;font-family:system-ui,Segoe UI,Roboto}
+  #c{display:block;width:100vw;height:100vh}
+
+  /* পুরোনো টাইটেল ডিলিট, শুধু নতুন টেক্সট */
+  .love-text{
+    position:fixed;
+    top:25%;
+    right:6%;
+    text-align:right;
+    font-size:1.6rem;
+    font-weight:700;
+    line-height:1.6;
+    font-family: 'Segoe Script','Lucida Handwriting',cursive;
+    background: linear-gradient(135deg, white, darkblue, yellow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow:0 2px 8px rgba(0,0,0,.6);
+    animation: fadeIn 4s ease-in-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateX(50px); }
+    to { opacity:1; transform:translateX(0); }
+  }
+
+  .hud{
+    position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;
+    pointer-events:none;padding:18vh 4vw 4vh; box-sizing:border-box;
+    text-align:center; color:#fff; text-shadow:0 2px 12px rgba(0,0,0,.7);
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- নতুন টেক্সট (দুই লাইন, right side) -->
+<div class="love-text">
+  I Love You <br> Suraiya Akter Sreti
+</div>
+
+<div class="hud">পূর্ণিমা রাত • চাঁদ–তারা • নদী • সিলুয়েট</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d', { alpha:false });
+  let W, H, DPR = Math.min(2, window.devicePixelRatio || 1);
+
+  function resize(){
+    W = Math.floor(innerWidth * DPR);
+    H = Math.floor(innerHeight * DPR);
+    canvas.width = W; canvas.height = H;
+    canvas.style.width = innerWidth + 'px';
+    canvas.style.height = innerHeight + 'px';
+    initStars(); initHearts(); initWaves(); initTrees();
+  }
+  addEventListener('resize', resize, { passive:true });
+
+  // ---- Sky gradient
+  function sky(){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#060a1a');   // deep top
+    g.addColorStop(0.5,'#0b1533'); // mid
+    g.addColorStop(1,'#081022');   // near horizon
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  }
+
+  // ---- Stars
+  let stars = [];
+  function initStars(){
+    const count = Math.floor((W*H)/3500);
+    stars = Array.from({length:count}, () => ({
+      x: Math.random()*W,
+      y: Math.random()*H*0.6,
+      r: Math.random()*1.6 + 0.2,
+      tw: Math.random()*Math.PI*2,
+      sp: 0.015 + Math.random()*0.02
+    }));
+  }
+  function drawStars(t){
+    ctx.save();
+    for(const s of stars){
+      const a = 0.4 + 0.6*Math.abs(Math.sin(s.tw + t*s.sp));
+      ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle = '#d8e8ff'; ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // ---- Moon + glow
+  function drawMoon(t){
+    const x = W*0.78, y = H*0.18, r = Math.min(W,H)*0.07;
+    const g = ctx.createRadialGradient(x,y, r*0.2, x,y, r*2.2);
+    g.addColorStop(0,'rgba(255,255,230,0.9)');
+    g.addColorStop(0.3,'rgba(255,250,200,0.5)');
+    g.addColorStop(1,'rgba(255,240,180,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x,y,r*2.2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle = '#fff8d8'; ctx.fill();
+    ctx.globalAlpha = 0.12 + 0.08*Math.sin(t*0.5);
+    ctx.beginPath(); ctx.arc(x - r*0.25, y - r*0.08, r*0.9, 0, Math.PI*2); ctx.fillStyle='#ffd'; ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- River
+  let waves = [];
+  function initWaves(){
+    const rows = 16;
+    waves = Array.from({length:rows}, (_,i) => ({
+      y: H*0.55 + i*(H*0.45/rows),
+      amp: 6 + i*0.8,
+      len: 120 + i*6,
+      sp: 0.6 + i*0.03,
+      alpha: Math.max(0.15, 0.32 - i*0.012)
+    }));
+  }
+  function drawRiver(t){
+    const g = ctx.createLinearGradient(0,H*0.55,0,H);
+    g.addColorStop(0,'#06132b');
+    g.addColorStop(1,'#020814');
+    ctx.fillStyle = g; ctx.fillRect(0,H*0.55,W,H*0.45);
+    const mx = W*0.78, top = H*0.55;
+    const stripes = 24;
+    for(let i=0;i<stripes;i++){
+      const yy = top + (i/stripes)*H*0.42;
+      const w = (1 - i/stripes) * (W*0.20) + 8;
+      const s = Math.sin(t*1.2 + i*0.7);
+      const cx = mx + s*(20 + i*1.2);
+      ctx.globalAlpha = 0.11 + (1-i/stripes)*0.08;
+      ctx.beginPath(); ctx.roundRect(cx - w/2, yy, w, 2.2, 1);
+      ctx.fillStyle = '#e9f6ff'; ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1;
+    for(const wv of waves){
+      ctx.globalAlpha = wv.alpha;
+      ctx.beginPath();
+      for(let x=0; x<=W; x+=6){
+        const y = wv.y + Math.sin((x+ t*60*wv.sp)/wv.len)*wv.amp;
+        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle = '#6fb7ff';
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- Trees
+  let treeLines = [];
+  function initTrees(){
+    const baseY = H*0.54;
+    treeLines = [];
+    function randTree(x,scale=1){
+      const h = 40*scale + Math.random()*60*scale;
+      return {x, h, w: 6*scale + Math.random()*10*scale};
+    }
+    const near = [], far = [];
+    for(let x=0;x<W;x+=Math.random()*35+25) near.push(randTree(x, 1.6));
+    for(let x=12;x<W;x+=Math.random()*45+35) far.push(randTree(x, 0.9));
+    treeLines = [{y:baseY-22, list:far, shade:'#0c1626'}, {y:baseY-4, list:near, shade:'#0a1422'}];
+  }
+  function drawTrees(){
+    for(const row of treeLines){
+      ctx.fillStyle = row.shade;
+      ctx.fillRect(0,row.y,W, H*0.02);
+      for(const t of row.list){
+        ctx.fillStyle = row.shade;
+        ctx.fillRect(t.x- t.w*0.15, row.y - t.h, t.w*0.3, t.h);
+        ctx.beginPath();
+        ctx.moveTo(t.x, row.y - t.h - t.w*1.2);
+        ctx.lineTo(t.x - t.w, row.y - t.h*0.15);
+        ctx.lineTo(t.x + t.w, row.y - t.h*0.15);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+  }
+
+  // ---- Hearts
+  let hearts = [];
+  function initHearts(){
+    const N = Math.floor(24 + W/60);
+    hearts = Array.from({length:N}, () => spawnHeart());
+  }
+  function spawnHeart(){
+    const base = Math.random();
+    return {
+      x: Math.random()*W, y: H*(0.55 + Math.random()*0.35),
+      s: 6 + Math.random()*14,
+      vy: - (0.15 + Math.random()*0.35),
+      vx: Math.sin(base*Math.PI*2) * (0.15 + Math.random()*0.3),
+      a: 0.2 + Math.random()*0.6,
+      wob: Math.random()*Math.PI*2, spin: 0.8 + Math.random()*1.2
+    };
+  }
+  function drawHeart(x,y,s){
+    ctx.save();
+    ctx.translate(x,y); ctx.scale(s,s);
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.bezierCurveTo(-0.5,-0.6, -1.3,-0.05, 0,-1.0);
+    ctx.bezierCurveTo(1.3,-0.05, 0.5,-0.6, 0,0);
+    ctx.closePath();
+    ctx.fillStyle = '#ff6aa0';
+    ctx.fill();
+    ctx.restore();
+  }
+  function heartsUpdate(t, dt){
+    for(const h of hearts){
+      h.y += h.vy * (dt*60);
+      h.x += (h.vx + Math.sin(h.wob + t*h.spin)*0.2) * (dt*60);
+      h.a -= 0.0025 * (dt*60);
+      if(h.y < H*0.12 || h.a <= 0){
+        Object.assign(h, spawnHeart(), { y: H*(0.55 + Math.random()*0.4) });
+      }
+    }
+  }
+  function drawHearts(){
+    ctx.save();
+    for(const h of hearts){
+      ctx.globalAlpha = Math.max(0,h.a);
+      drawHeart(h.x, h.y, h.s/DPR/22);
+    }
+    ctx.restore();
+  }
+
+  // ---- Loop
+  let last = performance.now();
+  function tick(now){
+    const dt = Math.min(0.05, (now-last)/1000); last = now; const t = now/1000;
+    sky();
+    drawStars(t);
+    drawMoon(t);
+    drawTrees();
+    drawRiver(t);
+    heartsUpdate(t, dt);
+    drawHearts();
+    requestAnimationFrame(tick);
+  }
+
+  if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){ this.beginPath(); this.moveTo(x+r,y); this.arcTo(x+w,y,x+w,y+h,r); this.arcTo(x+w,y+h,x,y+h,r); this.arcTo(x,y+h,x,y,r); this.arcTo(x,y,x+w,y,r); this.closePath(); return this; };
+  }
+
+  resize(); requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
