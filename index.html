@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Sorry • Suraiya Akter Sreti</title>
+  <style>
+    :root{
+      --sky1:#0b1020;         /* deep night */
+      --sky2:#1a2244;         /* mid-night */
+      --accent:#ff6b81;       /* heart pink */
+      --accent2:#ffd1dc;      /* soft pink */
+      --moon:#f9f7e8;         /* moonlight */
+      --glow:rgba(255,255,255,.35);
+      --text:#ffffff;         /* main text color */
+      --river:#0b1730;        /* river base */
+      --forgive:#7cf7c5;      /* forgive button */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(to bottom,var(--sky1),var(--sky2));font-family:system-ui, -apple-system, Segoe UI, Roboto, Noto Sans Bengali, Noto Sans, Arial, sans-serif;color:var(--text);}
+    body{overflow:hidden}
+
+    /* SCENE */
+    .scene{position:relative;width:100vw;height:100vh;overflow:hidden}
+
+    /* STARS */
+    .star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;opacity:.8;animation:twinkle 3s infinite ease-in-out}
+    @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+    /* MOON */
+    .moon{position:absolute;top:8vh;right:10vw;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 30% 30%, var(--moon) 0 60%, #e7e3c8 61% 100%);box-shadow:0 0 30px 10px var(--glow), 0 0 80px 30px rgba(255,255,200,.15)}
+    .moon:after{content:"";position:absolute;inset:-25px;filter:blur(18px);border-radius:50%;background:radial-gradient(circle, rgba(255,255,210,.35), transparent 60%)}
+
+    /* SOFT CLOUDS */
+    .cloud{position:absolute;top:15vh;left:-40vw;width:80vw;height:20vh;opacity:.08;filter:blur(6px);background:radial-gradient(60% 60% at 30% 50%, #fff 0, transparent 70%),radial-gradient(55% 55% at 60% 60%, #fff 0, transparent 70%);animation:cloud 60s linear infinite}
+    .cloud.c2{top:28vh;animation-duration:95s;opacity:.06}
+    @keyframes cloud{from{transform:translateX(0)}to{transform:translateX(140vw)}}
+
+    /* HORIZON & TREES */
+    .horizon{position:absolute;bottom:35vh;left:0;width:200vw;height:22vh;background:linear-gradient(to top, #0a0f22 0%, #0f1630 100%);transform:translateX(-25vw)}
+    .trees{position:absolute;bottom:35vh;left:0;width:200vw;height:24vh;pointer-events:none;opacity:.9;}
+    .trees svg{width:200vw;height:24vh;display:block;fill:#050914}
+    .trees .layer{animation:par 40s linear infinite}
+    .trees .layer.l2{opacity:.8;animation-duration:65s}
+    @keyframes par{from{transform:translateX(0)}to{transform:translateX(-25vw)}}
+
+    /* RIVER */
+    .river{position:absolute;bottom:0;left:0;width:100%;height:35vh;background:linear-gradient(to bottom, rgba(10,20,45,.9), var(--river));}
+    .ripples{position:absolute;inset:0;background:
+      radial-gradient(circle at 70% 10%, rgba(255,255,220,.35) 0 6%, transparent 7%),
+      repeating-linear-gradient( to right, rgba(255,255,255,.06) 0 3px, transparent 4px 12px);
+      mix-blend:screen;opacity:.5;animation:ripple 9s linear infinite}
+    @keyframes ripple{from{background-position:0 0, 0 0}to{background-position:100px 0, 400px 0}}
+
+    /* MOON REFLECTION */
+    .reflection{position:absolute;bottom:15vh;right:12vw;width:22vw;max-width:190px;height:18vh;background:radial-gradient(ellipse at 50% 0%, rgba(255,255,220,.35), rgba(255,255,220,.05) 60%, transparent 70%);filter:blur(2px);opacity:.7;animation:shimmer 4s ease-in-out infinite}
+    @keyframes shimmer{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.08)}}
+
+    /* HEARTS FLOATING */
+    .heart{position:absolute;width:14px;height:14px;transform:rotate(45deg);background:var(--accent);animation:floatUp linear infinite;box-shadow:0 0 8px rgba(255,107,129,.6)}
+    .heart:before,.heart:after{content:"";position:absolute;width:14px;height:14px;background:var(--accent);border-radius:50%}
+    .heart:before{left:-7px}
+    .heart:after{top:-7px}
+    @keyframes floatUp{from{transform:translateY(0) rotate(45deg) scale(.9);opacity:.9}to{transform:translateY(-110vh) rotate(45deg) scale(1.2);opacity:0}}
+
+    /* MESSAGE CARD */
+    .card{position:absolute;left:50%;top:58vh;transform:translate(-50%,-50%);width:min(92vw,560px);padding:18px 18px 20px;border-radius:22px;background:rgba(255,255,255,.08);backdrop-filter:blur(6px);box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);text-align:center}
+
+    .sorry{font-weight:800;letter-spacing:.6px;font-size:clamp(22px,6vw,42px);line-height:1.05;text-shadow:0 2px 10px rgba(255,107,129,.35),0 0 25px rgba(255,107,129,.25)}
+    .sorry .word{display:inline-block;animation:pop 1.6s ease forwards}
+    .sorry .word:nth-child(1){animation-delay:.1s}
+    .sorry .word:nth-child(2){animation-delay:.35s}
+    .sorry .word:nth-child(3){animation-delay:.6s}
+    @keyframes pop{0%{transform:translateY(20px) scale(.9);opacity:0}60%{transform:translateY(-6px) scale(1.08);opacity:1}100%{transform:translateY(0) scale(1)} }
+
+    .name{margin-top:6px;font-size:clamp(18px,5.2vw,34px);font-weight:700;color:#f8f8f8;letter-spacing:.4px;animation:slideIn 1.6s ease .5s both}
+    @keyframes slideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    .sub{margin-top:10px;font-size:clamp(13px,3.6vw,18px);opacity:.9}
+
+    /* BOWING HEART (apology gesture) */
+    .bow{margin:10px auto 4px;width:34px;height:34px;position:relative}
+    .bow .h{position:absolute;inset:0;transform-origin:50% 80%;animation:bow 3.8s ease-in-out infinite}
+    @keyframes bow{0%,100%{transform:rotate(0)}40%{transform:rotate(14deg)}50%{transform:rotate(-10deg)}}
+    .bow .h,.bow .h:before,.bow .h:after{background:var(--accent)}
+    .bow .h{transform:rotate(45deg);border-radius:6px;box-shadow:0 0 10px rgba(255,107,129,.5)}
+    .bow .h:before,.bow .h:after{content:"";position:absolute;width:34px;height:34px;border-radius:50%}
+    .bow .h:before{left:-17px}
+    .bow .h:after{top:-17px}
+
+    /* FORGIVE BUTTON */
+    .cta{margin-top:14px;display:inline-block;padding:10px 16px;border-radius:999px;background:linear-gradient( to bottom, var(--forgive), #37dca6 );color:#003324;font-weight:800;text-decoration:none;box-shadow:0 8px 20px rgba(55,220,166,.35);animation:pulse 2.2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+    .note{margin-top:10px;opacity:.8;font-size:clamp(12px,3.3vw,16px)}
+
+    /* WATER EDGE GLOW */
+    .shoreglow{position:absolute;bottom:35vh;left:0;width:100%;height:2px;background:linear-gradient(to right, transparent, rgba(255,255,255,.35), transparent);filter:blur(1px);opacity:.7}
+
+    /* SMALL HINT */
+    .hint{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:12px;opacity:.6}
+  </style>
+</head>
+<body>
+  <div class="scene" id="scene">
+    <!-- sky layers -->
+    <div class="cloud"></div>
+    <div class="cloud c2"></div>
+    <div class="moon"></div>
+
+    <!-- stars container -->
+    <div id="stars"></div>
+
+    <!-- parallax hills & trees -->
+    <div class="horizon"></div>
+    <div class="trees">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none" aria-hidden="true">
+        <g class="layer l1">
+          <path d="M0,180 C80,150 140,170 220,150 C300,130 320,160 420,150 C520,140 600,160 720,150 C860,138 960,160 1200,150 L1200,200 L0,200 Z" />
+        </g>
+        <g class="layer l2">
+          <path d="M0,190 C100,170 200,190 320,170 C440,150 560,185 700,172 C820,162 940,185 1200,172 L1200,200 L0,200 Z" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- river -->
+    <div class="river">
+      <div class="ripples"></div>
+      <div class="reflection"></div>
+    </div>
+    <div class="shoreglow"></div>
+
+    <!-- message card -->
+    <div class="card">
+      <div class="sorry" aria-label="Sorry Sorry Sorry">
+        <span class="word">Sorry</span>
+        <span class="word">Sorry</span>
+        <span class="word">Sorry</span>
+      </div>
+      <div class="name">Suraiya Akter Sreti</div>
+      <div class="bow"><div class="h"></div></div>
+      <div class="sub">আমি সত্যি খুব দুঃখিত… আর কষ্ট দিতে চাই না। 💗</div>
+      <a class="cta" href="#" id="forgive">একটু মাফ করে দেবে?</a>
+      <div class="note">এই রাত, এই নদী আর চাঁদের আলো—শুধু তোমার জন্য আমার ক্ষমা চাওয়া।</div>
+    </div>
+
+    <div class="hint">টাচ করলেই হৃদয়গুলো ভেসে যাবে…</div>
+  </div>
+
+  <script>
+    /* ====== CONFIG (edit these if you like) ====== */
+    const CONFIG = {
+      nameLine: "Suraiya Akter Sreti",               // second line text
+      apologyLine: "আমি সত্যি খুব দুঃখিত… আর কষ্ট দিতে চাই না। 💗", // small sub line
+      starCount: 90,                                   // fewer on low-end phones
+      heartEveryMs: 1200,                              // passive floating hearts interval
+    };
+
+    // apply config text
+    document.querySelector('.name').textContent = CONFIG.nameLine;
+    document.querySelector('.sub').textContent  = CONFIG.apologyLine;
+
+    // create stars with random twinkle delays
+    const starsWrap = document.getElementById('stars');
+    for(let i=0;i<CONFIG.starCount;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      const x = Math.random()*100; // vw
+      const y = Math.random()*55;  // top portion of sky
+      const size = Math.random()*2.2 + .6;
+      s.style.left = x + 'vw';
+      s.style.top = y + 'vh';
+      s.style.width = s.style.height = size + 'px';
+      s.style.animationDelay = (Math.random()*3).toFixed(2) + 's';
+      starsWrap.appendChild(s);
+    }
+
+    // floating hearts (passive)
+    const scene = document.getElementById('scene');
+    function spawnHeart(x){
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const left = (typeof x === 'number') ? x : Math.random()*window.innerWidth;
+      h.style.left = left + 'px';
+      h.style.bottom = (20 + Math.random()*100) + 'px';
+      const dur = 7 + Math.random()*6; // seconds
+      h.style.animationDuration = dur + 's';
+      h.style.opacity = (0.6 + Math.random()*0.4).toFixed(2);
+      h.style.transform = 'rotate(45deg)';
+      scene.appendChild(h);
+      setTimeout(()=> h.remove(), (dur*1000)-100);
+    }
+
+    // hearts on interval
+    let heartTimer = setInterval(()=> spawnHeart(), CONFIG.heartEveryMs);
+
+    // touch / click spawns a burst of hearts
+    scene.addEventListener('pointerdown', (e)=>{
+      const rect = scene.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      for(let i=0;i<12;i++){
+        setTimeout(()=> spawnHeart(x + (Math.random()*80-40)), i*60);
+      }
+    });
+
+    // Forgive button: gentle confetti hearts + tiny vibration if supported
+    const btn = document.getElementById('forgive');
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      if(navigator.vibrate){ try{ navigator.vibrate([20, 40, 20]); }catch(_){} }
+      for(let i=0;i<28;i++) setTimeout(()=> spawnHeart(window.innerWidth*0.5 + (Math.random()*160-80)), i*40);
+      btn.textContent = 'ধন্যবাদ… ❤️';
+      setTimeout(()=> btn.textContent = 'একটু মাফ করে দেবে?', 4000);
+    });
+
+    // Reduce motion for users who prefer it
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function toggleMotion(){
+      if(media.matches){
+        clearInterval(heartTimer); heartTimer=null;
+        document.querySelectorAll('.star').forEach(s=> s.style.animation='none');
+        document.querySelector('.ripples').style.animation='none';
+        document.querySelector('.bow .h').style.animation='none';
+      }
+    }
+    media.addEventListener('change', toggleMotion); toggleMotion();
+  </script>
+</body>
+</html>
